@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+@{
+    var todos = new List<string>()
+  {
+    "Start the dishwasher",
+    "Buy milk",
+    "Pay bills"
+  };
+}
+
+<h1>My todo list</h1>
+
+<ul>
+    @foreach (var item in todos)
+    {
+        <li>@item</li>
+    }
+</ul>
+
