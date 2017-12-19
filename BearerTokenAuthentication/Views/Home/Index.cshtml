@@ -3,13 +3,18 @@
     ViewData["Title"] = "Index";
 }
 
+<script src="~/js/jquery.min.js"></script>
+
 <div>
-    <h1>ASP.NET Core Bearer Auth</h1>
-    <input type="button" id="GetToken" value="Get Token" />
-    <div id="token"></div>
+    <h1>ASP.NET Core Bearer Token Authentication</h1>
+    <input type="button" id="GetToken" value="Create token" />
     <hr />
-    <input type="button" id="UseToken" value="Use Token" />
-    <div id="result"></div>
+    <input type="text" id="token" size="600" />
+    <hr />
+    <input type="button" id="UseToken" value="Use token to call car controller" />
+    <hr />
+    <div id="resultCars"></div>
+    <div id="resultToken"></div>
 </div>
 
 <script>
@@ -18,10 +23,10 @@
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("Create", "Token")',
-                    data: JSON.stringify({ "Username": "james", "Password": "bond" }),
+                    data: JSON.stringify({ "Username": "johannes", "Password": "olofsson" }),
                     contentType: "application/json"
                 }).done(function (data, statusText, xhdr) {
-                    $("#token").text(data);
+                    $("#token").val(data);
                 }).fail(function (xhdr, statusText, errorText) {
                     $("#token").text(errorText);
                 });
@@ -30,14 +35,16 @@
             $("#UseToken").click(function () {
                 $.ajax({
                     method: 'GET',
-                    url: '@Url.Action("Get", "Movies")',
+                    url: '@Url.Action("Get", "Car")',
                     beforeSend: function (xhdr) {
-                        xhdr.setRequestHeader("Authorization", "Bearer " + $("#token").text());
+                        xhdr.setRequestHeader("Authorization", "Bearer " + $("#token").val());
                     }
                 }).done(function (data, statusText, xhdr) {
-                    $("#result").text(JSON.stringify(data));
+                    $("#resultToken").text(JSON.stringify(data.token));
+                    $("#resultCars").text(JSON.stringify(data.cars));
                 }).fail(function (xhdr, statusText, errorText) {
-                    $("#result").text(JSON.stringify(xhdr));
+                    $("#resultToken").text(JSON.stringify(xhdr));
+                    $("#resultCars").text("");
                 });
             });
         });
