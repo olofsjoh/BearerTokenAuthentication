@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace BearerTokenAuthentication
 {
@@ -28,7 +31,7 @@ namespace BearerTokenAuthentication
 
             AddConfiguration(services);
 
-            services.AddMvc();
+            services.AddMvc(x => x.Filters.Add(new RequireHttpsAttribute()));
         }
 
         private void AddJwtBearerAuthenticationScheme(IServiceCollection services)
@@ -75,6 +78,14 @@ namespace BearerTokenAuthentication
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
             app.UseAuthentication();
+
+            if (env.IsDevelopment())
+            {
+                var options = new RewriteOptions()
+               .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 44388);
+                app.UseRewriter(options);
+            }
+
             app.UseMvcWithDefaultRoute();
         }
     }
